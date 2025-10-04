@@ -39,3 +39,26 @@ class SO101FollowerConfig(RobotConfig):
 
     # Set to `True` for backward compatibility with previous policies/dataset
     use_degrees: bool = False
+
+@dataclass
+class SO101FollowerHostConfig(RobotConfig):
+    # Network Configuration
+    port_zmq_cmd: int = 5555
+    port_zmq_observations: int = 5556
+
+    # Duration of the application
+    connection_time_s: int = 3000
+
+    # Watchdog: stop the robot if no command is received for over 0.5 seconds.
+    watchdog_timeout_ms: int = 500
+
+    # If robot jitters decrease the frequency and monitor cpu load with `top` in cmd
+    max_loop_freq_hz: int = 30
+
+@RobotConfig.register_subclass("so101_follower_client")
+@dataclass
+class SO101FollowerClientConfig(RobotConfig):
+    # Network Configuration
+    remote_ip: str
+    port_zmq_cmd: int = 5555
+    port_zmq_observations: int = 5556
