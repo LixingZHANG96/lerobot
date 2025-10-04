@@ -21,7 +21,6 @@ def encode_sign_magnitude(value: int, sign_bit_index: int):
     magnitude = abs(value)
     if magnitude > max_magnitude:
         raise ValueError(f"Magnitude {magnitude} exceeds {max_magnitude} (max for {sign_bit_index=})")
-
     direction_bit = 1 if value < 0 else 0
     return (direction_bit << sign_bit_index) | magnitude
 
