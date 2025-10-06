@@ -16,16 +16,24 @@
 
 from dataclasses import dataclass, field
 
-from lerobot.cameras import CameraConfig
+from lerobot.cameras import CameraConfig, Cv2Rotation
+from lerobot.cameras.opencv.configuration_opencv import OpenCVCameraConfig
 
 from ..config import RobotConfig
 
+def so101_follower_cameras_config() -> dict[str, CameraConfig]:
+    return {
+        "wrist": OpenCVCameraConfig(
+            index_or_path="/dev/video0", fps=30, width=480, height=640, rotation=Cv2Rotation.ROTATE_270
+        ),
+    }
 
 @RobotConfig.register_subclass("so101_follower")
 @dataclass
 class SO101FollowerConfig(RobotConfig):
     # Port to connect to the arm
-    port: str
+    port: str = "/dev/ttyACM0"
+    id: str = "lix_follower_1"
 
     disable_torque_on_disconnect: bool = True
 
@@ -41,7 +49,7 @@ class SO101FollowerConfig(RobotConfig):
     use_degrees: bool = False
 
 @dataclass
-class SO101FollowerHostConfig(RobotConfig):
+class SO101FollowerHostConfig():
     # Network Configuration
     port_zmq_cmd: int = 5555
     port_zmq_observations: int = 5556

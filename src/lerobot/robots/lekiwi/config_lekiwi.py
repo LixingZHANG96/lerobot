@@ -35,6 +35,7 @@ def lekiwi_cameras_config() -> dict[str, CameraConfig]:
 @dataclass
 class LeKiwiConfig(RobotConfig):
     port: str = "/dev/ttyACM0"  # port to connect to the bus
+    id: str = "lix_lekiwi_1"
 
     disable_torque_on_disconnect: bool = True
 
