@@ -5,8 +5,8 @@ import json
 import logging
 import time
 
-import cv2
-import zmq
+import cv2 # type: ignore
+import zmq # type: ignore
 
 from .so101_follower import SO101Follower
 from .config_so101_follower import SO101FollowerConfig, SO101FollowerHostConfig

@@ -70,3 +70,8 @@ class SO101FollowerClientConfig(RobotConfig):
     remote_ip: str
     port_zmq_cmd: int = 5555
     port_zmq_observations: int = 5556
+
+    cameras: dict[str, CameraConfig] = field(default_factory=so101_follower_cameras_config)
+
+    polling_timeout_ms: int = 15
+    connect_timeout_s: int = 5
