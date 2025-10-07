@@ -12,7 +12,7 @@ from lerobot.utils.constants import ACTION, OBS_STATE
 from lerobot.utils.errors import DeviceAlreadyConnectedError, DeviceNotConnectedError
 
 from ..robot import Robot
-from .config_so101_follower import SO101FollowerConfig, SO101FollowerClientConfig
+from .config_so101_follower import SO101FollowerClientConfig
 
 class SO101FollowerClient(Robot):
     config_class = SO101FollowerClientConfig
@@ -28,7 +28,7 @@ class SO101FollowerClient(Robot):
         self.port_zmq_cmd = config.port_zmq_cmd
         self.port_zmq_observations = config.port_zmq_observations
 
-        self.teleop_keys = config.teleop_keys
+        # self.teleop_keys = config.teleop_keys
 
         self.polling_timeout_ms = config.polling_timeout_ms
         self.connect_timeout_s = config.connect_timeout_s
@@ -57,7 +57,23 @@ class SO101FollowerClient(Robot):
             ),
             float,
         )
-    """
+    
+    @cached_property
+    def action_features(self) -> dict[str, type]:
+        return self._state_ft
+
+    @property
+    def is_calibrated(self) -> bool:
+        pass
+    
+    @property
+    def is_connected(self) -> bool:
+        return self._is_connected
+    
+    @cached_property
+    def observation_features(self) -> dict[str, type | tuple]:
+        return {**self._state_ft, **self._cameras_ft}
+
     @cached_property
     def _state_order(self) -> tuple[str, ...]:
         return tuple(self._state_ft.keys())
@@ -65,23 +81,6 @@ class SO101FollowerClient(Robot):
     @cached_property
     def _cameras_ft(self) -> dict[str, tuple[int, int, int]]:
         return {name: (cfg.height, cfg.width, 3) for name, cfg in self.config.cameras.items()}
-
-    @cached_property
-    def observation_features(self) -> dict[str, type | tuple]:
-        return {**self._state_ft, **self._cameras_ft}
-
-    @cached_property
-    def action_features(self) -> dict[str, type]:
-        return self._state_ft
-
-    @property
-    def is_connected(self) -> bool:
-        return self._is_connected
-
-    @property
-    def is_calibrated(self) -> bool:
-        pass
-    """
 
     def connect(self) -> None:
         """Establishes ZMQ sockets with the remote mobile robot"""
@@ -110,10 +109,8 @@ class SO101FollowerClient(Robot):
 
         self._is_connected = True
 
-    """
     def calibrate(self) -> None:
         pass
-    """
 
     def _poll_and_get_latest_message(self) -> Optional[str]:
         """Polls the ZMQ socket for a limited time and returns the latest message string."""
@@ -173,7 +170,7 @@ class SO101FollowerClient(Robot):
 
         state_vec = np.array([flat_state[key] for key in self._state_order], dtype=np.float32)
 
-        obs_dict: Dict[str, Any] = {**flat_state, "observation.state": state_vec}
+        obs_dict: Dict[str, Any] = {**flat_state, OBS_STATE: state_vec}
 
         # Decode images
         current_frames: Dict[str, np.ndarray] = {}
@@ -265,7 +262,7 @@ class SO101FollowerClient(Robot):
         actions = np.array([action.get(k, 0.0) for k in self._state_order], dtype=np.float32)
 
         action_sent = {key: actions[i] for i, key in enumerate(self._state_order)}
-        action_sent["action"] = actions
+        action_sent[ACTION] = actions
         return action_sent
     
     def disconnect(self):

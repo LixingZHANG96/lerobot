@@ -10,7 +10,7 @@ FPS = 30
 # Create the robot and teleoperator configurations
 remote_ip = "192.168.1.103"
 port = "/dev/ttyACM0"  # Adjust this port based on your system
-id = "lix_follower_1"
+id = "lix_leader_1"
 robot_config = SO101FollowerClientConfig(remote_ip=remote_ip)
 teleop_arm_config = SO101LeaderConfig(port=port, id=id)
 
@@ -37,7 +37,7 @@ while True:
 
     # Get teleop action
     arm_action = leader_arm.get_action()
-    arm_action = {f"arm_{k}": v for k, v in arm_action.items()}
+    arm_action = {f"{k}": v for k, v in arm_action.items()}
 
     # Send action to robot
     _ = robot.send_action(arm_action)

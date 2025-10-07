@@ -37,7 +37,7 @@ def main():
     robot = SO101Follower(robot_config)
     logging.info("SO101 Follower configured successfully.")
 
-    logging.info("Connecting Xlerobot")
+    logging.info("Connecting SO101 Follower")
     robot.connect()
 
     logging.info("Starting HostAgent")
@@ -67,9 +67,10 @@ def main():
             now = time.time()
             if (now - last_cmd_time > host.watchdog_timeout_ms / 1000) and not watchdog_active:
                 logging.warning(
-                    f"Command not received for more than {host.watchdog_timeout_ms} milliseconds. Stopping."
+                    f"Command not received for more than {host.watchdog_timeout_ms} milliseconds. Stopping the base."
                 )
                 watchdog_active = True
+                robot.stop_base()
 
             last_observation = robot.get_observation()
 
