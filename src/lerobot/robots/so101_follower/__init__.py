@@ -14,5 +14,6 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from .config_so101_follower import SO101FollowerConfig
+from .config_so101_follower import SO101FollowerConfig, SO101FollowerClientConfig
 from .so101_follower import SO101Follower
+from .so101_follower_client import SO101FollowerClient
